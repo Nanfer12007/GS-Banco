@@ -85,4 +85,10 @@ CREATE TABLE vaga_competencia (
 -- Tabela de auditoria genérica
 CREATE TABLE auditoria_log (
     id_log            NUMBER PRIMARY KEY,
-    tabela_afetada    VAR_
+    tabela_afetada    VARCHAR2(50),
+    operacao          VARCHAR2(10),          -- INSERT, UPDATE, DELETE
+    id_registro       VARCHAR2(100),
+    usuario_bd        VARCHAR2(30),
+    dt_operacao       DATE DEFAULT SYSDATE,
+    detalhe           VARCHAR2(4000)
+);
