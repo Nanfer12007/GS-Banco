@@ -15,11 +15,11 @@ O projeto está alinhado com:
 
 ---
 
-## 1. Membros do grupo
+# SEÇÃO 1 - Membros do grupo
 
 ---
 
-## 2. Objetivos Acadêmicos Atendidos
+# SEÇÃO 2 - Objetivos Acadêmicos Atendidos
 
 Aqui eu explico **diretamente** como este projeto cobre os itens do enunciado:
 
@@ -53,7 +53,7 @@ Aqui eu explico **diretamente** como este projeto cobre os itens do enunciado:
 
 ---
 
-## 3. Tecnologias Utilizadas
+# SEÇÃO 3 - Tecnologias Utilizadas
 
 - **Banco de Dados:** Oracle Database
 - **Linguagem de programação do BD:** PL/SQL
@@ -63,7 +63,7 @@ Aqui eu explico **diretamente** como este projeto cobre os itens do enunciado:
 
 ---
 
-## 4. Descrição dos Principais Componentes
+# SEÇÃO 4 - Descrição dos Principais Componentes
 
 A base de dados foi organizada em pastas seguindo uma arquitetura modular, onde cada domínio da aplicação possui seus próprios packages, procedures e triggers. Isso facilita manutenção, reutilização e integração com a aplicação web/mobile do projeto.
 
@@ -165,7 +165,7 @@ Centraliza auditoria:
 
 --- 
 
-## 5. Como Executar o Projeto
+# SEÇÃO 5 - Como Executar o Projeto
 
 ### ✔ 1. Criar usuário/schema no Oracle (opcional)
 Se desejar, crie um schema exclusivo para o projeto:
@@ -213,7 +213,7 @@ END;
 
 ---
 
-# ✨ **SEÇÃO 6 – Como Demonstrar o Projeto na Apresentação**
+# SEÇÃO 6 – Como Demonstrar o Projeto na Apresentação**
 ```markdown
 ## 6. Como Demonstrar o Projeto na Apresentação
 
