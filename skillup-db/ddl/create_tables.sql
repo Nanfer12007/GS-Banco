@@ -1,94 +1,114 @@
--- PROFISSIONAIS / USUÁRIOS DA PLATAFORMA
+-------------------------------------------------------------
+-- CREATE TABLES – SkillUp (Futuro do Trabalho / Requalificação)
+-- Todas usando IDENTITY COLUMN conforme escolhido
+-------------------------------------------------------------
+
+-------------------------------------------------------------
+-- Tabela USUARIO
+-------------------------------------------------------------
 CREATE TABLE usuario (
-    id_usuario        NUMBER        PRIMARY KEY,
-    nome              VARCHAR2(100) NOT NULL,
-    email             VARCHAR2(150) NOT NULL UNIQUE,
-    cpf               VARCHAR2(11)  NOT NULL UNIQUE,
-    senioridade       VARCHAR2(30),           -- jr, pleno, sr
-    area_interesse    VARCHAR2(100),          -- dados, dev, design, etc
-    risco_automacao   NUMBER(3),              -- 0 a 100 (risco do cargo atual)
-    dt_cadastro       DATE DEFAULT SYSDATE
+    id_usuario        NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nome              VARCHAR2(100)   NOT NULL,
+    email             VARCHAR2(120)   NOT NULL UNIQUE,
+    cpf               VARCHAR2(14)    NOT NULL UNIQUE,
+    senioridade       VARCHAR2(20)    CHECK (senioridade IN ('Junior','Pleno','Senior')),
+    area_interesse    VARCHAR2(100),
+    risco_automacao   NUMBER(3)       CHECK (risco_automacao BETWEEN 0 AND 100)
 );
 
--- COMPETÊNCIAS 
+-------------------------------------------------------------
+-- Tabela COMPETENCIA
+-------------------------------------------------------------
 CREATE TABLE competencia (
-    id_competencia    NUMBER        PRIMARY KEY,
-    nome              VARCHAR2(100) NOT NULL,
-    categoria         VARCHAR2(50),           -- técnica, comportamental
-    descricao         VARCHAR2(4000)
+    id_competencia   NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nome             VARCHAR2(100) NOT NULL,
+    categoria        VARCHAR2(30)  CHECK (categoria IN ('Tecnica','Comportamental')),
+    descricao        VARCHAR2(500)
 );
 
--- CURSOS
-CREATE TABLE curso (
-    id_curso          NUMBER        PRIMARY KEY,
-    titulo            VARCHAR2(200) NOT NULL,
-    provedor          VARCHAR2(100),          -- Coursera, Alura, etc
-    carga_horaria     NUMBER(5),
-    nivel             VARCHAR2(30),           -- básico, intermediário, avançado
-    area_foco         VARCHAR2(100)           -- IA, dados, programação, soft skills
-);
-
--- TRILHAS (agrupam cursos)
-CREATE TABLE trilha (
-    id_trilha         NUMBER        PRIMARY KEY,
-    nome              VARCHAR2(200) NOT NULL,
-    descricao         VARCHAR2(4000)
-);
-
--- VAGAS (futuro do trabalho)
-CREATE TABLE vaga (
-    id_vaga           NUMBER        PRIMARY KEY,
-    titulo            VARCHAR2(200) NOT NULL,
-    empresa           VARCHAR2(150),
-    localidade        VARCHAR2(100),
-    modalidade        VARCHAR2(30),           -- remoto, híbrido, presencial
-    descricao         VARCHAR2(4000),
-    faixa_salarial    VARCHAR2(50),
-    dt_publicacao     DATE
-);
-
--- TABELAS DE RELACIONAMENTO 3FN
-
--- Usuário x Competência
+-------------------------------------------------------------
+-- Tabela USUARIO_COMPETENCIA (N:N)
+-------------------------------------------------------------
 CREATE TABLE usuario_competencia (
-    id_usuario        NUMBER NOT NULL,
-    id_competencia    NUMBER NOT NULL,
-    nivel             NUMBER(3),             -- 0 a 100 (nível de proficiência)
+    id_usuario       NUMBER NOT NULL,
+    id_competencia   NUMBER NOT NULL,
+    nivel            NUMBER(3) CHECK (nivel BETWEEN 0 AND 100),
     CONSTRAINT pk_usuario_competencia PRIMARY KEY (id_usuario, id_competencia)
 );
 
--- Curso x Competência
+-------------------------------------------------------------
+-- Tabela CURSO
+-------------------------------------------------------------
+CREATE TABLE curso (
+    id_curso        NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    titulo          VARCHAR2(150) NOT NULL,
+    provedor        VARCHAR2(80),
+    carga_horaria   NUMBER,
+    nivel           VARCHAR2(20),
+    area_foco       VARCHAR2(80)
+);
+
+-------------------------------------------------------------
+-- Tabela TRILHA
+-------------------------------------------------------------
+CREATE TABLE trilha (
+    id_trilha     NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nome          VARCHAR2(120) NOT NULL,
+    descricao     VARCHAR2(4000)
+);
+
+-------------------------------------------------------------
+-- Tabela CURSO_COMPETENCIA (N:N)
+-------------------------------------------------------------
 CREATE TABLE curso_competencia (
-    id_curso          NUMBER NOT NULL,
-    id_competencia    NUMBER NOT NULL,
-    relevancia        NUMBER(3),            -- % de relevância da skill no curso
+    id_curso        NUMBER NOT NULL,
+    id_competencia  NUMBER NOT NULL,
     CONSTRAINT pk_curso_competencia PRIMARY KEY (id_curso, id_competencia)
 );
 
--- Matricula de usuário em curso
-CREATE TABLE matricula_curso (
-    id_matricula      NUMBER PRIMARY KEY,
-    id_usuario        NUMBER NOT NULL,
-    id_curso          NUMBER NOT NULL,
-    dt_matricula      DATE DEFAULT SYSDATE,
-    status            VARCHAR2(20)          -- em_andamento, concluido, cancelado
+-------------------------------------------------------------
+-- Tabela VAGA
+-------------------------------------------------------------
+CREATE TABLE vaga (
+    id_vaga         NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    titulo          VARCHAR2(150) NOT NULL,
+    empresa         VARCHAR2(120) NOT NULL,
+    localidade      VARCHAR2(100),
+    modalidade      VARCHAR2(20) CHECK (modalidade IN ('Remoto','Híbrido','Presencial')),
+    descricao       VARCHAR2(4000),
+    faixa_salarial  VARCHAR2(60),
+    dt_publicacao   DATE DEFAULT SYSDATE
 );
 
--- Vaga x Competência
+-------------------------------------------------------------
+-- Tabela VAGA_COMPETENCIA (N:N)
+-------------------------------------------------------------
 CREATE TABLE vaga_competencia (
-    id_vaga           NUMBER NOT NULL,
-    id_competencia    NUMBER NOT NULL,
-    peso              NUMBER(3),            -- peso da skill para a vaga
+    id_vaga         NUMBER NOT NULL,
+    id_competencia  NUMBER NOT NULL,
+    peso            NUMBER(3) CHECK (peso BETWEEN 0 AND 100),
     CONSTRAINT pk_vaga_competencia PRIMARY KEY (id_vaga, id_competencia)
 );
 
--- Tabela de auditoria genérica
+-------------------------------------------------------------
+-- Tabela MATRICULA_CURSO
+-------------------------------------------------------------
+CREATE TABLE matricula_curso (
+    id_matricula   NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_usuario     NUMBER NOT NULL,
+    id_curso       NUMBER NOT NULL,
+    dt_matricula   DATE DEFAULT SYSDATE
+);
+
+-------------------------------------------------------------
+-- Tabela AUDITORIA_LOG (usada pelas triggers)
+-------------------------------------------------------------
 CREATE TABLE auditoria_log (
-    id_log            NUMBER PRIMARY KEY,
-    tabela_afetada    VARCHAR2(50),
-    operacao          VARCHAR2(10),          -- INSERT, UPDATE, DELETE
-    id_registro       VARCHAR2(100),
-    usuario_bd        VARCHAR2(30),
-    dt_operacao       DATE DEFAULT SYSDATE,
-    detalhe           VARCHAR2(4000)
+    id_log           NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    tabela_afetada   VARCHAR2(100) NOT NULL,
+    operacao         VARCHAR2(10)  NOT NULL,
+    id_registro      VARCHAR2(100),
+    usuario_bd       VARCHAR2(50),
+    data_operacao    DATE DEFAULT SYSDATE,
+    detalhe          VARCHAR2(4000)
 );
