@@ -271,3 +271,12 @@ Sugestão de roteiro para defesa:
   - Futuro do trabalho  
   - IA e automação  
 - E aos itens técnicos pedidos no trabalho.
+
+
+---
+
+# 👤 Integrantes
+
+- RM556588 - Gabriel Yuji Suzuki
+- RM97677 - Lucas Felix Vassiliades
+- RM556972 - Gabriel Duarte Pinto
